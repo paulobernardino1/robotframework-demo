@@ -28,13 +28,11 @@ __ `running demo`_
 Demo application
 ================
 
-The demo application is a very simple login page shown below. With
+The demo application is a very simple login page. With
 user name ``demo`` and password ``mode`` you get into a welcome page, and
 otherwise you end up to an error page. How to start and stop the
 application yourself is explained in the `Starting demo application`_
 section.
-
-.. figure:: demoapp.png
 
 Test cases
 ==========
