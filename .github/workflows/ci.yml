@@ -20,6 +20,21 @@ jobs:
       - run: pip install --upgrade pip
       - run: pip install -r requirements.txt
 
+      # Instala o Firefox
+      - name: Install Firefox
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y firefox
+
+      # Instala o geckodriver (driver do Firefox)
+      - name: Install geckodriver
+        run: |
+          GECKODRIVER_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+          wget https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz
+          tar -xzf geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz
+          chmod +x geckodriver
+          sudo mv geckodriver /usr/local/bin/
+
       - run: mkdir -p results
 
       - run: robot --output results/output.xml --log results/log.html --report results/report.html login_tests/
