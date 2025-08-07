@@ -35,7 +35,7 @@ jobs:
                 login_tests/
 
       - name: Publicar artefatos (relatórios)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: robot-report
           path: results/
