@@ -1,38 +1,41 @@
-name: CI - Robot Framework Tests
+name: Robot Framework CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ "main" ]
 
 jobs:
   robot-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
+      - name: Checkout repositório
+        uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Configurar Python
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: '3.11'
 
-      - name: Instalar dependências
-        run: pip install -r requirements.txt
-
-      - name: Executar testes Robot
+      - name: Instalar dependências do requirements.txt
         run: |
-          mkdir -p results
-          robot -d results tests/
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Upload de relatórios
-        if: success()  # Só envia se tudo for verde
-        uses: actions/upload-artifact@v4
+      - name: Criar pasta de resultados
+        run: mkdir -p results
+
+      - name: Rodar testes Robot Framework
+        run: |
+          robot --output results/output.xml \
+                --log results/log.html \
+                --report results/report.html \
+                login_tests/
+
+      - name: Publicar artefatos (relatórios)
+        uses: actions/upload-artifact@v3
         with:
-          name: relatorios-robot
+          name: robot-report
           path: results/
