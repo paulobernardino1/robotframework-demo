@@ -1,6 +1,5 @@
 *** Settings ***
 Documentation     A resource file with reusable keywords and variables.
-...
 ...               The system specific keywords created here form our own
 ...               domain specific language. They utilize keywords provided
 ...               by the imported SeleniumLibrary.
@@ -11,7 +10,7 @@ ${SERVER}         localhost:7272
 ${BROWSER}        Firefox
 ${DELAY}          0
 ${VALID USER}     demo
-${VALID PASSWORD}    mode
+${VALID PASSWORD} mode
 ${LOGIN URL}      http://${SERVER}/
 ${WELCOME URL}    http://${SERVER}/welcome.html
 ${ERROR URL}      http://${SERVER}/error.html
@@ -19,7 +18,7 @@ ${ERROR URL}      http://${SERVER}/error.html
 *** Keywords ***
 Open Browser To Login Page
     ${options}=    Evaluate    sys.modules['selenium.webdriver'].FirefoxOptions()    sys, selenium.webdriver
-    ...            ${options}.headless = True
+    Call Method    ${options}    set_headless    True
     Open Browser    ${LOGIN URL}    ${BROWSER}    options=${options}
     Maximize Browser Window
     Set Selenium Speed    ${DELAY}
