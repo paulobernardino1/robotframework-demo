@@ -33,14 +33,9 @@ jobs:
 
       - name: Instalar ChromeDriver
         run: |
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-          echo "Chrome version: $CHROME_VERSION"
-          LATEST_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
-          if [ -z "$LATEST_DRIVER_VERSION" ]; then
-            # fallback para versão principal se não encontrar exata
-            MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d '.' -f1)
-            LATEST_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$MAJOR_VERSION)
-          fi
+          CHROME_MAJOR_VERSION=$(google-chrome --version | grep -oP '\d+' | head -1)
+          echo "Chrome major version: $CHROME_MAJOR_VERSION"
+          LATEST_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION)
           echo "Driver version: $LATEST_DRIVER_VERSION"
           wget -N https://chromedriver.storage.googleapis.com/$LATEST_DRIVER_VERSION/chromedriver_linux64.zip
           unzip -o chromedriver_linux64.zip
@@ -64,3 +59,4 @@ jobs:
         with:
           name: robot-report
           path: results/
+
