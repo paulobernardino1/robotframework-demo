@@ -18,7 +18,9 @@ ${ERROR URL}      http://${SERVER}/error.html
 
 *** Keywords ***
 Open Browser To Login Page
-    Open Browser    ${LOGIN URL}    ${BROWSER}
+    ${options}=    Evaluate    sys.modules['selenium.webdriver'].FirefoxOptions()    sys, selenium.webdriver
+    ...            ${options}.headless = True
+    Open Browser    ${LOGIN URL}    ${BROWSER}    options=${options}
     Maximize Browser Window
     Set Selenium Speed    ${DELAY}
     Login Page Should Be Open
