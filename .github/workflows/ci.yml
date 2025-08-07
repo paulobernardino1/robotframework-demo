@@ -24,14 +24,39 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Instalar Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
+
+      - name: Instalar ChromeDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          echo "Chrome version: $CHROME_VERSION"
+          LATEST_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+          if [ -z "$LATEST_DRIVER_VERSION" ]; then
+            # fallback para versão principal se não encontrar exata
+            MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d '.' -f1)
+            LATEST_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$MAJOR_VERSION)
+          fi
+          echo "Driver version: $LATEST_DRIVER_VERSION"
+          wget -N https://chromedriver.storage.googleapis.com/$LATEST_DRIVER_VERSION/chromedriver_linux64.zip
+          unzip -o chromedriver_linux64.zip
+          sudo mv -f chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
+
       - name: Criar pasta de resultados
         run: mkdir -p results
 
-      - name: Rodar testes Robot Framework
+      - name: Rodar testes Robot Framework com Chrome headless
         run: |
           robot --output results/output.xml \
                 --log results/log.html \
                 --report results/report.html \
+                --variable BROWSER:chrome \
+                --variable CHROME_OPTIONS:--headless,--no-sandbox,--disable-dev-shm-usage \
                 login_tests/
 
       - name: Publicar artefatos (relatórios)
